@@ -1126,3 +1126,6 @@ export const PERIPHERAL_CATEGORIES: ComponentCategory[] = [
   'mouse',
   'headset',
 ];
+
+/** Chipsets that support DDR5 — shared between CompatibilityGuide and builderStore */
+export const DDR5_CHIPSETS = ['X670', 'X670E', 'B650', 'B650E', 'Z790', 'B760', 'Z890', 'B860'];

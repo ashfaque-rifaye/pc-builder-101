@@ -6,6 +6,7 @@ import type {
 } from '../types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { DDR5_CHIPSETS } from '../data/components';
 
 interface BuilderState {
   selectedComponents: Partial<Record<ComponentCategory, AnyPCComponent>>;
@@ -59,7 +60,7 @@ function checkCompatibility(
     const ramType = getSpec(ram, 'type');
     const mbMemType = getSpec(motherboard, 'chipset');
     if (ramType === 'DDR5' && mbMemType) {
-      const ddr5Chipsets = ['X670', 'X670E', 'B650', 'B650E', 'Z790', 'B760', 'Z890', 'B860'];
+      const ddr5Chipsets = DDR5_CHIPSETS;
       const compatible = ddr5Chipsets.some((c) => mbMemType.includes(c));
       if (!compatible) {
         issues.push({

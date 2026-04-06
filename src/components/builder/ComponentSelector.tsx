@@ -101,7 +101,9 @@ export default function ComponentSelector({ category, onSelect }: ComponentSelec
 
   function handleSelect(component: AnyPCComponent) {
     const stockStatus = getStockStatus(component);
-    if (stockStatus === 'out_of_stock' && !isAvailableInRegion(component)) return; // prevent selection
+    // Prevent selection if out of stock OR not available in this region
+    if (stockStatus === 'out_of_stock') return;
+    if (!isAvailableInRegion(component)) return;
     if (selected?.id === component.id) {
       removeComponent(category);
     } else {

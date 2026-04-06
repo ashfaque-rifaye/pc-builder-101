@@ -1,5 +1,5 @@
 import { useBuilderStore } from '../../store/builderStore';
-import { allComponents } from '../../data/components';
+import { allComponents, DDR5_CHIPSETS } from '../../data/components';
 import type { AnyPCComponent } from '../../types';
 
 interface Suggestion {
@@ -99,8 +99,7 @@ export default function CompatibilityGuide() {
   // ── RAM type + motherboard
   if (motherboard && !ram) {
     const chipset = getSpec(motherboard, 'chipset');
-    const ddr5Chipsets = ['X670', 'X670E', 'B650', 'B650E', 'Z790', 'B760', 'Z890', 'B860'];
-    const isDDR5 = ddr5Chipsets.some((c) => chipset.includes(c));
+    const isDDR5 = DDR5_CHIPSETS.some((c) => chipset.includes(c));
     const compatRAMs = (allComponents['ram'] ?? []).filter((r) => {
       const type = getSpec(r, 'type');
       return isDDR5 ? type === 'DDR5' : type === 'DDR4';
