@@ -827,7 +827,7 @@ export const keyboards: PCComponent[] = [
     reviews: 4560,
     inStock: true,
     tags: ['mechanical', 'hall-effect', 'gaming'],
-    affiliateUrl: 'https://wooting.io/wooting-60he',
+    affiliateUrl: 'https://www.amazon.com/s?k=Wooting+60HE+plus+keyboard',
     specs: {
       layout: '60%',
       switches: 'Lekker (Hall Effect)',
