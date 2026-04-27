@@ -1,4 +1,5 @@
 import { useState, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBuilderStore } from '../store/builderStore';
 import ComponentSelector from '../components/builder/ComponentSelector';
 import CompatibilityChecker from '../components/builder/CompatibilityChecker';
@@ -18,6 +19,7 @@ const ALL_CATEGORIES: ComponentCategory[] = [...REQUIRED_CATEGORIES, ...PERIPHER
 export default function Builder() {
   const { activeCategory, setActiveCategory, clearBuild, totalPrice, selectedComponents, compatibilityIssues } =
     useBuilderStore();
+  const navigate = useNavigate();
   const [showScene, setShowScene] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [mobileRightOpen, setMobileRightOpen] = useState(false);
@@ -25,9 +27,10 @@ export default function Builder() {
   const hasErrors = compatibilityIssues.some((i) => i.type === 'error');
   const selectedCount = Object.keys(selectedComponents).length;
   const progress = Math.round((selectedCount / ALL_CATEGORIES.length) * 100);
+  const requiredDone = REQUIRED_CATEGORIES.every((c) => !!selectedComponents[c]) && !hasErrors;
 
   return (
-    <div className="min-h-screen pt-16 bg-theme-dark">
+    <div className="min-h-screen pt-16 page-enter" style={{ background: 'var(--bg-dark)' }}>
       {/* Header */}
       <div className="border-b sticky top-16 z-30" style={{ background: 'color-mix(in srgb, var(--bg-dark) 80%, transparent)', backdropFilter: 'blur(12px)', borderColor: 'var(--border-subtle)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
@@ -49,7 +52,7 @@ export default function Builder() {
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-28 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-card-hover)' }}>
                 <div
-                  className="h-full rounded-full transition-all duration-500"
+                  className="h-full rounded-full transition-all duration-700 ease-out"
                   style={{ width: `${progress}%`, background: 'linear-gradient(90deg, var(--neon-primary), var(--neon-secondary))' }}
                 />
               </div>
@@ -61,15 +64,27 @@ export default function Builder() {
 
           <div className="flex items-center gap-2">
             {totalPrice > 0 && (
-              <span className="text-sm font-bold gradient-text">
+              <span className="text-sm font-bold gradient-text animate-fade-in">
                 ${totalPrice.toLocaleString()}
               </span>
             )}
             {hasErrors && (
               <span className="hidden sm:flex items-center gap-1 text-xs px-2 py-1 rounded-full" style={{ color: '#f87171', background: 'color-mix(in srgb, #dc2626 20%, transparent)' }}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#f87171' }} />
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#f87171' }} />
                 Issue
               </span>
+            )}
+            {requiredDone && (
+              <button
+                onClick={() => navigate('/build')}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, var(--accent-1), var(--accent-2))' }}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+                Build 3D →
+              </button>
             )}
             <button
               onClick={() => setMobileRightOpen(true)}
@@ -109,7 +124,7 @@ export default function Builder() {
               <div className="absolute inset-0 bg-black/60 lg:hidden" onClick={() => setMobileSidebarOpen(false)} />
             )}
             <div
-              className="relative z-10 h-full lg:h-auto overflow-y-auto space-y-1 p-4 lg:p-0"
+              className="relative z-10 h-full lg:h-auto overflow-y-auto space-y-1 p-4 lg:p-0 animate-fade-in-left"
               style={{ background: mobileSidebarOpen ? 'var(--bg-card)' : 'transparent', maxWidth: mobileSidebarOpen ? '280px' : 'none' }}
             >
               {mobileSidebarOpen && (
@@ -199,7 +214,7 @@ export default function Builder() {
           </div>
 
           {/* ── Center: Component list or 3D ──────────────────────── */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 animate-fade-in-up delay-100">
             {showScene ? (
               <div className="rounded-2xl overflow-hidden border h-[600px]" style={{ borderColor: 'var(--border-subtle)' }}>
                 <Suspense
@@ -229,7 +244,7 @@ export default function Builder() {
           </div>
 
           {/* ── Right: Summary sidebar (hidden on mobile, shown via overlay) ── */}
-          <div className={`${mobileRightOpen ? 'fixed inset-0 z-40 lg:static lg:z-auto' : 'hidden lg:block'} w-full lg:w-[300px] flex-shrink-0`}>
+          <div className={`${mobileRightOpen ? 'fixed inset-0 z-40 lg:static lg:z-auto' : 'hidden lg:block'} w-full lg:w-[300px] flex-shrink-0 animate-fade-in-right delay-200`}>
             {mobileRightOpen && (
               <div className="absolute inset-0 bg-black/60 lg:hidden" onClick={() => setMobileRightOpen(false)} />
             )}
@@ -275,6 +290,23 @@ export default function Builder() {
 
         </div>
       </div>
+
+      {/* Mobile Build FAB */}
+      {requiredDone && (
+        <button
+          onClick={() => navigate('/build')}
+          className="fixed bottom-6 right-6 z-50 lg:hidden flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold text-white shadow-xl transition-transform hover:scale-105 active:scale-95 animate-scale-in"
+          style={{
+            background: 'linear-gradient(135deg, var(--accent-1), var(--accent-2))',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.4), 0 0 20px color-mix(in srgb, var(--accent-1) 30%, transparent)',
+          }}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+          </svg>
+          Build 3D →
+        </button>
+      )}
     </div>
   );
 }

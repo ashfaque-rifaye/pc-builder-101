@@ -1,25 +1,37 @@
+import { useNavigate } from 'react-router-dom';
 import { useBuilderStore } from '../../store/builderStore';
 import { useUiStore } from '../../store/uiStore';
 import { CATEGORY_LABELS, CATEGORY_ICONS, REQUIRED_CATEGORIES } from '../../data/components';
-import { formatPrice, buildAffiliateUrl, getRegion } from '../../data/regions';
-import type { ComponentCategory } from '../../types';
+import { formatPrice, getRegion } from '../../data/regions';
+import { getPreferredPurchaseUrl } from '../../services/api';
+import type { ComponentCategory, AnyPCComponent } from '../../types';
 
 export default function PriceEstimate() {
   const { selectedComponents, totalPrice, compatibilityIssues } = useBuilderStore();
   const { region } = useUiStore();
+  const navigate = useNavigate();
   const regionConfig = getRegion(region);
 
   const hasErrors = compatibilityIssues.some((i) => i.type === 'error');
   const requiredMissing = REQUIRED_CATEGORIES.filter((c) => !selectedComponents[c]);
-  const readyToBuy = requiredMissing.length === 0 && !hasErrors;
+  const readyToBuild = requiredMissing.length === 0 && !hasErrors;
 
   const allSelectedEntries = Object.entries(selectedComponents) as [
     ComponentCategory,
     NonNullable<(typeof selectedComponents)[ComponentCategory]>
   ][];
 
-  function getPurchaseUrl(brand: string, name: string): string {
-    return buildAffiliateUrl(`${brand} ${name}`, region);
+  function getPurchaseUrl(component: AnyPCComponent): string {
+    const comp = component as AnyPCComponent & { productUrls?: Record<string, string> };
+    if (comp.productUrls) {
+      const preferredUrl = getPreferredPurchaseUrl(
+        comp.productUrls,
+        region,
+        `${component.brand} ${component.name}`
+      );
+      if (preferredUrl) return preferredUrl;
+    }
+    return component.affiliateUrl;
   }
 
   const localTotal = totalPrice * regionConfig.usdRate;
@@ -72,7 +84,7 @@ export default function PriceEstimate() {
       {/* Total */}
       <div
         className="rounded-xl p-4"
-        style={readyToBuy ? {
+        style={readyToBuild ? {
           background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-1) 20%, transparent), color-mix(in srgb, var(--accent-2) 10%, transparent))',
           border: '1px solid color-mix(in srgb, var(--accent-1) 30%, transparent)',
         } : {
@@ -84,7 +96,7 @@ export default function PriceEstimate() {
           <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
             Estimated Total · {regionConfig.currency}
           </span>
-          {readyToBuy && (
+          {readyToBuild && (
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#4ade80', background: 'color-mix(in srgb, #16a34a 15%, transparent)' }}>
               ✓ Build Complete
             </span>
@@ -98,11 +110,28 @@ export default function PriceEstimate() {
         </p>
       </div>
 
-      {/* Buy All / Individual purchase */}
+      {/* Build PC Button */}
+      {readyToBuild && (
+        <button
+          onClick={() => navigate('/build')}
+          className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          style={{
+            background: 'linear-gradient(135deg, var(--accent-1), var(--accent-2))',
+            boxShadow: '0 0 20px color-mix(in srgb, var(--accent-1) 40%, transparent), 0 4px 15px rgba(0,0,0,0.3)',
+          }}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+          </svg>
+          Build PC — View 3D Assembly →
+        </button>
+      )}
+
+      {/* Buy / Individual purchase */}
       {allSelectedEntries.length > 0 && (
         <div className="space-y-2">
           <a
-            href={getPurchaseUrl(allSelectedEntries[0][1].brand, allSelectedEntries[0][1].name)}
+            href={getPurchaseUrl(allSelectedEntries[0][1])}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full btn-primary py-3 rounded-xl text-sm font-semibold text-white"
@@ -118,7 +147,7 @@ export default function PriceEstimate() {
               {allSelectedEntries.slice(0, 4).map(([category, component]) => (
                 <a
                   key={category}
-                  href={getPurchaseUrl(component.brand, component.name)}
+                  href={getPurchaseUrl(component)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 btn-secondary py-1.5 px-2 rounded-lg text-xs hover:opacity-80"

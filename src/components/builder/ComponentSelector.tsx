@@ -3,6 +3,7 @@ import { CATEGORY_LABELS, CATEGORY_ICONS, allComponents } from '../../data/compo
 import { useBuilderStore } from '../../store/builderStore';
 import { useUiStore } from '../../store/uiStore';
 import { formatPrice, buildAffiliateUrl, getRegion } from '../../data/regions';
+import { getPreferredPurchaseUrl, getPurchaseLinks, type ProductLink } from '../../services/api';
 
 interface ComponentSelectorProps {
   category: ComponentCategory;
@@ -76,11 +77,29 @@ export default function ComponentSelector({ category, onSelect }: ComponentSelec
     return component.availableIn.includes(region);
   }
 
-  // Get purchase URL for current region
+  // Get purchase URL for current region (prefers direct product URLs)
   function getPurchaseUrl(component: AnyPCComponent): string {
+    const comp = component as AnyPCComponent & { productUrls?: Record<string, string> };
+    if (comp.productUrls) {
+      const preferredUrl = getPreferredPurchaseUrl(
+        comp.productUrls,
+        region,
+        `${component.brand} ${component.name}`
+      );
+      if (preferredUrl) return preferredUrl;
+    }
     const regionalUrl = component.regionalUrls?.[region];
     if (regionalUrl) return regionalUrl;
     return buildAffiliateUrl(`${component.brand} ${component.name}`, region);
+  }
+
+  // Get all retailer links for a component
+  function getRetailerLinks(component: AnyPCComponent): ProductLink[] {
+    const comp = component as AnyPCComponent & { productUrls?: Record<string, string> };
+    if (comp.productUrls) {
+      return getPurchaseLinks(comp.productUrls, region, `${component.brand} ${component.name}`);
+    }
+    return [];
   }
 
   // Alternative region URLs when out of stock
@@ -235,33 +254,63 @@ export default function ComponentSelector({ category, onSelect }: ComponentSelec
                 </div>
               )}
 
-              {/* Purchase link */}
-              {!isOutOfStock && (
-                <a
-                  href={purchaseUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className={`mt-2 flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-xs font-medium transition-all border`}
-                  style={isSelected ? {
-                    background: 'color-mix(in srgb, var(--neon-primary) 10%, transparent)',
-                    color: 'var(--neon-primary)',
-                    borderColor: 'color-mix(in srgb, var(--neon-primary) 30%, transparent)',
-                  } : {
-                    background: 'color-mix(in srgb, white 5%, transparent)',
-                    color: 'var(--text-secondary)',
-                    borderColor: 'var(--border-subtle)',
-                  }}
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                  Buy on {regionConfig.flag} {regionConfig.amazonDomain}
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              )}
+              {/* Purchase links - multi-retailer */}
+              {!isOutOfStock && (() => {
+                const retailers = getRetailerLinks(component);
+                return retailers.length > 1 ? (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {retailers.slice(0, 4).map((r) => (
+                      <a
+                        key={r.retailer.domain}
+                        href={r.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1 py-1 px-2 rounded-lg text-[10px] font-medium transition-all border"
+                        style={isSelected ? {
+                          background: 'color-mix(in srgb, var(--neon-primary) 10%, transparent)',
+                          color: 'var(--neon-primary)',
+                          borderColor: 'color-mix(in srgb, var(--neon-primary) 30%, transparent)',
+                        } : {
+                          background: 'color-mix(in srgb, white 5%, transparent)',
+                          color: 'var(--text-secondary)',
+                          borderColor: 'var(--border-subtle)',
+                        }}
+                      >
+                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        {r.retailer.name}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <a
+                    href={purchaseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-2 flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-xs font-medium transition-all border"
+                    style={isSelected ? {
+                      background: 'color-mix(in srgb, var(--neon-primary) 10%, transparent)',
+                      color: 'var(--neon-primary)',
+                      borderColor: 'color-mix(in srgb, var(--neon-primary) 30%, transparent)',
+                    } : {
+                      background: 'color-mix(in srgb, white 5%, transparent)',
+                      color: 'var(--text-secondary)',
+                      borderColor: 'var(--border-subtle)',
+                    }}
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    Buy on {regionConfig.flag} {regionConfig.amazonDomain}
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                );
+              })()}
             </div>
           );
         })}

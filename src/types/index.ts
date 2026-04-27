@@ -37,6 +37,8 @@ export interface PCComponent {
   specs: Record<string, string>;
   tags: string[];
   affiliateUrl: string;   // default (US) Amazon URL
+  /** Direct product URLs per retailer domain (e.g. 'amazon.com' → 'https://www.amazon.com/dp/B0...') */
+  productUrls?: Record<string, string>;
   /** Region-specific affiliate URLs override */
   regionalUrls?: Partial<Record<RegionCode, string>>;
   /** Regions where this product is available; empty/undefined = all regions */

@@ -4,9 +4,11 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Builder from './pages/Builder';
+import BuildView from './pages/BuildView';
 import Viewer from './pages/Viewer';
 import Presets from './pages/Presets';
 import LaptopBuilder from './pages/LaptopBuilder';
+import CompareBuilds from './pages/CompareBuilds';
 import { useUiStore } from './store/uiStore';
 
 export default function App() {
@@ -25,6 +27,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/builder" element={<Builder />} />
+            <Route path="/build" element={<BuildView />} />
+            <Route path="/compare" element={<CompareBuilds />} />
             <Route path="/laptop" element={<LaptopBuilder />} />
             <Route path="/viewer" element={<Viewer />} />
             <Route path="/presets" element={<Presets />} />

@@ -27,6 +27,15 @@ export const cpus: CPUComponent[] = [
     inStock: true,
     tags: ['flagship', 'workstation', 'streaming'],
     affiliateUrl: 'https://www.amazon.com/s?k=AMD+Ryzen+9+9950X',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0D5T672X8',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0D5T672X8',
+      'amazon.in': 'https://www.amazon.in/dp/B0D5T672X8',
+      'amazon.de': 'https://www.amazon.de/dp/B0D5T672X8',
+      'amazon.ca': 'https://www.amazon.ca/dp/B0D5T672X8',
+      'newegg.com': 'https://www.newegg.com/amd-ryzen-9-9950x/p/N82E16819113934',
+      'bestbuy.com': 'https://www.bestbuy.com/site/amd-ryzen-9-9950x/6595200.p',
+    },
     specs: {
       cores: '16',
       threads: '32',
@@ -49,6 +58,14 @@ export const cpus: CPUComponent[] = [
     inStock: true,
     tags: ['gaming', 'best-value', 'mid-range'],
     affiliateUrl: 'https://www.amazon.com/s?k=AMD+Ryzen+7+9700X',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0D5T1VLVZ',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0D5T1VLVZ',
+      'amazon.in': 'https://www.amazon.in/dp/B0D5T1VLVZ',
+      'amazon.de': 'https://www.amazon.de/dp/B0D5T1VLVZ',
+      'newegg.com': 'https://www.newegg.com/amd-ryzen-7-9700x/p/N82E16819113935',
+      'bestbuy.com': 'https://www.bestbuy.com/site/amd-ryzen-7-9700x/6595198.p',
+    },
     specs: {
       cores: '8',
       threads: '16',
@@ -71,6 +88,14 @@ export const cpus: CPUComponent[] = [
     inStock: true,
     tags: ['flagship', 'gaming', 'intel'],
     affiliateUrl: 'https://www.amazon.com/s?k=Intel+Core+Ultra+9+285K',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0DHWDR8Y6',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0DHWDR8Y6',
+      'amazon.in': 'https://www.amazon.in/dp/B0DHWDR8Y6',
+      'amazon.de': 'https://www.amazon.de/dp/B0DHWDR8Y6',
+      'newegg.com': 'https://www.newegg.com/intel-core-ultra-9-285k/p/N82E16819118534',
+      'bestbuy.com': 'https://www.bestbuy.com/site/intel-core-ultra-9-285k/6588432.p',
+    },
     specs: {
       cores: '24',
       threads: '24',
@@ -93,6 +118,13 @@ export const cpus: CPUComponent[] = [
     inStock: true,
     tags: ['gaming', 'mid-range', 'intel'],
     affiliateUrl: 'https://www.amazon.com/s?k=Intel+Core+Ultra+5+245K',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0DHW8RN2H',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0DHW8RN2H',
+      'amazon.in': 'https://www.amazon.in/dp/B0DHW8RN2H',
+      'amazon.de': 'https://www.amazon.de/dp/B0DHW8RN2H',
+      'newegg.com': 'https://www.newegg.com/intel-core-ultra-5-245k/p/N82E16819118535',
+    },
     specs: {
       cores: '14',
       threads: '14',
@@ -115,6 +147,13 @@ export const cpus: CPUComponent[] = [
     inStock: true,
     tags: ['budget', 'integrated-gpu', 'office'],
     affiliateUrl: 'https://www.amazon.com/s?k=AMD+Ryzen+5+8600G',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CQ4SLKZ7',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0CQ4SLKZ7',
+      'amazon.in': 'https://www.amazon.in/dp/B0CQ4SLKZ7',
+      'newegg.com': 'https://www.newegg.com/amd-ryzen-5-8600g/p/N82E16819113843',
+      'flipkart.com': 'https://www.flipkart.com/amd-ryzen-5-8600g-processor/p/itm2948f8a5f4e41',
+    },
     specs: {
       cores: '6',
       threads: '12',
@@ -137,6 +176,10 @@ export const cpus: CPUComponent[] = [
     inStock: true,
     tags: ['workstation', 'professional', 'extreme'],
     affiliateUrl: 'https://www.amazon.com/s?k=AMD+Threadripper+PRO+7995WX',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CMHP8GJL',
+      'newegg.com': 'https://www.newegg.com/amd-ryzen-threadripper-pro-7995wx/p/N82E16819113826',
+    },
     specs: {
       cores: '96',
       threads: '192',
@@ -163,6 +206,11 @@ export const gpus: GPUComponent[] = [
     inStock: true,
     tags: ['flagship', '8k-gaming', 'ai'],
     affiliateUrl: 'https://www.amazon.com/s?k=NVIDIA+RTX+5090',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0DT9P4HKD',
+      'newegg.com': 'https://www.newegg.com/nvidia-geforce-rtx-5090/p/N82E16814138070',
+      'bestbuy.com': 'https://www.bestbuy.com/site/nvidia-geforce-rtx-5090/6614152.p',
+    },
     specs: {
       vram: '32GB GDDR7',
       coreClock: '2.01 GHz',
@@ -184,6 +232,11 @@ export const gpus: GPUComponent[] = [
     inStock: true,
     tags: ['high-end', '4k-gaming', 'ray-tracing'],
     affiliateUrl: 'https://www.amazon.com/s?k=NVIDIA+RTX+5080',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0DT9N99JY',
+      'newegg.com': 'https://www.newegg.com/nvidia-geforce-rtx-5080/p/N82E16814138071',
+      'bestbuy.com': 'https://www.bestbuy.com/site/nvidia-geforce-rtx-5080/6614150.p',
+    },
     specs: {
       vram: '16GB GDDR7',
       coreClock: '2.30 GHz',
@@ -205,6 +258,15 @@ export const gpus: GPUComponent[] = [
     inStock: true,
     tags: ['flagship', '4k-gaming', 'content-creation'],
     affiliateUrl: 'https://www.amazon.com/s?k=NVIDIA+RTX+4090',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BGP8FGNZ',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0BGP8FGNZ',
+      'amazon.in': 'https://www.amazon.in/dp/B0BGP8FGNZ',
+      'amazon.de': 'https://www.amazon.de/dp/B0BGP8FGNZ',
+      'newegg.com': 'https://www.newegg.com/asus-geforce-rtx-4090/p/N82E16814126631',
+      'bestbuy.com': 'https://www.bestbuy.com/site/asus-tuf-gaming-rtx-4090/6521508.p',
+      'flipkart.com': 'https://www.flipkart.com/asus-nvidia-tuf-gaming-geforce-rtx-4090/p/itmb7c8a2f6bc6ea',
+    },
     specs: {
       vram: '24GB GDDR6X',
       coreClock: '2.23 GHz',
@@ -226,6 +288,11 @@ export const gpus: GPUComponent[] = [
     inStock: true,
     tags: ['gaming', '4k-capable', 'best-value'],
     affiliateUrl: 'https://www.amazon.com/s?k=AMD+Radeon+RX+9070+XT',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0DXQM4P7V',
+      'newegg.com': 'https://www.newegg.com/amd-radeon-rx-9070-xt/p/N82E16814137828',
+      'bestbuy.com': 'https://www.bestbuy.com/site/amd-radeon-rx-9070-xt/6614200.p',
+    },
     specs: {
       vram: '16GB GDDR6',
       coreClock: '2.21 GHz',
@@ -247,6 +314,13 @@ export const gpus: GPUComponent[] = [
     inStock: true,
     tags: ['mid-range', '1440p-gaming', 'dlss3'],
     affiliateUrl: 'https://www.amazon.com/s?k=NVIDIA+RTX+4060+Ti',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0C53LC9QQ',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0C53LC9QQ',
+      'amazon.in': 'https://www.amazon.in/dp/B0C53LC9QQ',
+      'newegg.com': 'https://www.newegg.com/nvidia-geforce-rtx-4060-ti/p/N82E16814137783',
+      'flipkart.com': 'https://www.flipkart.com/msi-nvidia-geforce-rtx-4060-ti-ventus-2x/p/itm8c4d7ed10a8c5',
+    },
     specs: {
       vram: '16GB GDDR6',
       coreClock: '2.31 GHz',
@@ -268,6 +342,12 @@ export const gpus: GPUComponent[] = [
     inStock: true,
     tags: ['budget', '1080p-gaming', 'fsr3'],
     affiliateUrl: 'https://www.amazon.com/s?k=AMD+Radeon+RX+7600',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0C7DHDHBZ',
+      'amazon.in': 'https://www.amazon.in/dp/B0C7DHDHBZ',
+      'newegg.com': 'https://www.newegg.com/amd-radeon-rx-7600/p/N82E16814137789',
+      'flipkart.com': 'https://www.flipkart.com/sapphire-amd-radeon-rx-7600-pulse/p/itm77dd32652cc07',
+    },
     specs: {
       vram: '8GB GDDR6',
       coreClock: '1.72 GHz',
@@ -293,6 +373,11 @@ export const motherboards: MotherboardComponent[] = [
     inStock: true,
     tags: ['flagship', 'am5', 'overclocking'],
     affiliateUrl: 'https://www.amazon.com/s?k=ASUS+ROG+Crosshair+X870E+Hero',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0DG7MRMJP',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0DG7MRMJP',
+      'newegg.com': 'https://www.newegg.com/asus-rog-crosshair-x870e-hero/p/N82E16813119667',
+    },
     specs: {
       socket: 'AM5',
       formFactor: 'ATX',
@@ -314,6 +399,12 @@ export const motherboards: MotherboardComponent[] = [
     inStock: true,
     tags: ['gaming', 'am5', 'wifi6e'],
     affiliateUrl: 'https://www.amazon.com/s?k=MSI+MPG+B650+Carbon+WiFi',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BJFB34HX',
+      'amazon.in': 'https://www.amazon.in/dp/B0BJFB34HX',
+      'newegg.com': 'https://www.newegg.com/msi-mpg-b650-carbon-wifi/p/N82E16813144584',
+      'flipkart.com': 'https://www.flipkart.com/msi-mpg-b650-carbon-wifi-motherboard/p/itmf3e3dab0f5e25',
+    },
     specs: {
       socket: 'AM5',
       formFactor: 'ATX',
@@ -335,6 +426,11 @@ export const motherboards: MotherboardComponent[] = [
     inStock: true,
     tags: ['flagship', 'lga1851', 'overclocking'],
     affiliateUrl: 'https://www.amazon.com/s?k=ASUS+ROG+Maximus+Z890+Apex',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0DK6VN7T8',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0DK6VN7T8',
+      'newegg.com': 'https://www.newegg.com/asus-rog-maximus-z890-apex/p/N82E16813119682',
+    },
     specs: {
       socket: 'LGA1851',
       formFactor: 'ATX',
@@ -356,6 +452,12 @@ export const motherboards: MotherboardComponent[] = [
     inStock: true,
     tags: ['gaming', 'lga1700', 'wifi6e'],
     affiliateUrl: 'https://www.amazon.com/s?k=Gigabyte+Z790+Aorus+Elite+AX',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BG6JBQ2Y',
+      'amazon.in': 'https://www.amazon.in/dp/B0BG6JBQ2Y',
+      'newegg.com': 'https://www.newegg.com/gigabyte-z790-aorus-elite-ax/p/N82E16813145407',
+      'flipkart.com': 'https://www.flipkart.com/gigabyte-z790-aorus-elite-ax-motherboard/p/itm8dd2c2c4e3f85',
+    },
     specs: {
       socket: 'LGA1700',
       formFactor: 'ATX',
@@ -381,6 +483,12 @@ export const rams: RAMComponent[] = [
     inStock: true,
     tags: ['gaming', 'rgb', 'ddr5'],
     affiliateUrl: 'https://www.amazon.com/s?k=GSkill+Trident+Z5+RGB+32GB+DDR5',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BF56L4QL',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0BF56L4QL',
+      'amazon.in': 'https://www.amazon.in/dp/B0BF56L4QL',
+      'newegg.com': 'https://www.newegg.com/g-skill-32gb-trident-z5-rgb/p/N82E16820374372',
+    },
     specs: {
       capacity: '32GB',
       speed: 'DDR5-6400',
@@ -401,6 +509,11 @@ export const rams: RAMComponent[] = [
     inStock: true,
     tags: ['workstation', 'content-creation', 'ddr5'],
     affiliateUrl: 'https://www.amazon.com/s?k=Corsair+Vengeance+DDR5+64GB',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0C9V1L1Y6',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0C9V1L1Y6',
+      'newegg.com': 'https://www.newegg.com/corsair-64gb-vengeance-ddr5/p/N82E16820236869',
+    },
     specs: {
       capacity: '64GB',
       speed: 'DDR5-5600',
@@ -421,6 +534,12 @@ export const rams: RAMComponent[] = [
     inStock: true,
     tags: ['budget', 'ddr5', 'overclocking'],
     affiliateUrl: 'https://www.amazon.com/s?k=Kingston+Fury+Beast+32GB+DDR5',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B09T9BMLBF',
+      'amazon.in': 'https://www.amazon.in/dp/B09T9BMLBF',
+      'newegg.com': 'https://www.newegg.com/kingston-32gb-fury-beast-ddr5/p/N82E16820242685',
+      'flipkart.com': 'https://www.flipkart.com/kingston-fury-beast-ddr5-32gb/p/itm3c4e88f0fc64e',
+    },
     specs: {
       capacity: '32GB',
       speed: 'DDR5-5200',
@@ -445,6 +564,15 @@ export const storages: StorageComponent[] = [
     inStock: true,
     tags: ['nvme', 'flagship', 'fast'],
     affiliateUrl: 'https://www.amazon.com/s?k=Samsung+990+Pro+2TB',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BHJJ9Y77',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0BHJJ9Y77',
+      'amazon.in': 'https://www.amazon.in/dp/B0BHJJ9Y77',
+      'amazon.de': 'https://www.amazon.de/dp/B0BHJJ9Y77',
+      'newegg.com': 'https://www.newegg.com/samsung-2tb-990-pro/p/N82E16820147873',
+      'bestbuy.com': 'https://www.bestbuy.com/site/samsung-990-pro-2tb/6523595.p',
+      'flipkart.com': 'https://www.flipkart.com/samsung-990-pro-2-tb/p/itm5c6d14b1a37a5',
+    },
     specs: {
       capacity: '2TB',
       type: 'NVMe SSD',
@@ -465,6 +593,13 @@ export const storages: StorageComponent[] = [
     inStock: true,
     tags: ['nvme', 'gaming', 'fast'],
     affiliateUrl: 'https://www.amazon.com/s?k=WD+Black+SN850X+2TB',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0B7CKVCCV',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0B7CKVCCV',
+      'amazon.in': 'https://www.amazon.in/dp/B0B7CKVCCV',
+      'newegg.com': 'https://www.newegg.com/western-digital-2tb-black-sn850x/p/N82E16820250248',
+      'flipkart.com': 'https://www.flipkart.com/western-digital-sn850x-2-tb/p/itmba1d12dcec79f',
+    },
     specs: {
       capacity: '2TB',
       type: 'NVMe SSD',
@@ -485,6 +620,10 @@ export const storages: StorageComponent[] = [
     inStock: true,
     tags: ['high-capacity', 'nvme', 'workstation'],
     affiliateUrl: 'https://www.amazon.com/s?k=Kingston+KC3000+4TB',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BDHFB4SZ',
+      'newegg.com': 'https://www.newegg.com/kingston-4tb-kc3000/p/N82E16820242685',
+    },
     specs: {
       capacity: '4TB',
       type: 'NVMe SSD',
@@ -505,6 +644,12 @@ export const storages: StorageComponent[] = [
     inStock: true,
     tags: ['storage', 'hdd', 'budget'],
     affiliateUrl: 'https://www.amazon.com/s?k=Seagate+Barracuda+8TB',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B07H2RR55Q',
+      'amazon.in': 'https://www.amazon.in/dp/B07H2RR55Q',
+      'newegg.com': 'https://www.newegg.com/seagate-barracuda-st8000dm004/p/N82E16822184773',
+      'flipkart.com': 'https://www.flipkart.com/seagate-barracuda-8-tb/p/itm59d94e5b1f0a2',
+    },
     specs: {
       capacity: '8TB',
       type: 'HDD',
@@ -529,6 +674,11 @@ export const psus: PSUComponent[] = [
     inStock: true,
     tags: ['flagship', '1500w', 'platinum'],
     affiliateUrl: 'https://www.amazon.com/s?k=Corsair+HX1500i',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CLGG4K65',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0CLGG4K65',
+      'newegg.com': 'https://www.newegg.com/corsair-hx1500i/p/N82E16817139310',
+    },
     specs: {
       wattage: '1500',
       efficiency: '80+ Platinum',
@@ -548,6 +698,10 @@ export const psus: PSUComponent[] = [
     inStock: true,
     tags: ['gaming', '1000w', 'gold'],
     affiliateUrl: 'https://www.amazon.com/s?k=EVGA+Supernova+1000+G7',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B09VZ2TBW6',
+      'newegg.com': 'https://www.newegg.com/evga-supernova-1000-g7/p/N82E16817438233',
+    },
     specs: {
       wattage: '1000',
       efficiency: '80+ Gold',
@@ -567,6 +721,11 @@ export const psus: PSUComponent[] = [
     inStock: true,
     tags: ['mid-range', '850w', 'gold'],
     affiliateUrl: 'https://www.amazon.com/s?k=Thermaltake+Toughpower+GF3+850W',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BN5CWHLB',
+      'amazon.in': 'https://www.amazon.in/dp/B0BN5CWHLB',
+      'newegg.com': 'https://www.newegg.com/thermaltake-toughpower-gf3-850w/p/N82E16817153458',
+    },
     specs: {
       wattage: '850',
       efficiency: '80+ Gold',
@@ -586,6 +745,12 @@ export const psus: PSUComponent[] = [
     inStock: true,
     tags: ['budget', '650w', 'gold'],
     affiliateUrl: 'https://www.amazon.com/s?k=Seasonic+Focus+GX-650',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B087VM6RJJ',
+      'amazon.in': 'https://www.amazon.in/dp/B087VM6RJJ',
+      'newegg.com': 'https://www.newegg.com/seasonic-focus-gx-650/p/N82E16817151232',
+      'flipkart.com': 'https://www.flipkart.com/seasonic-focus-gx-650/p/itm5e5bb08bd6ad2',
+    },
     specs: {
       wattage: '650',
       efficiency: '80+ Gold',
@@ -609,6 +774,11 @@ export const cases: CaseComponent[] = [
     inStock: true,
     tags: ['flagship', 'e-atx', 'glass'],
     affiliateUrl: 'https://www.amazon.com/s?k=Lian+Li+O11D+XL-E',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B09F5H9MNF',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B09F5H9MNF',
+      'newegg.com': 'https://www.newegg.com/lian-li-o11d-xl-e/p/2AM-000Z-00097',
+    },
     specs: {
       formFactor: 'E-ATX / ATX',
       material: 'Aluminum + Tempered Glass',
@@ -630,6 +800,11 @@ export const cases: CaseComponent[] = [
     inStock: true,
     tags: ['airflow', 'atx', 'minimalist'],
     affiliateUrl: 'https://www.amazon.com/s?k=Fractal+Design+Meshify+2+XL',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B08JQ2K3GR',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B08JQ2K3GR',
+      'newegg.com': 'https://www.newegg.com/fractal-design-meshify-2-xl/p/N82E16811352151',
+    },
     specs: {
       formFactor: 'ATX',
       material: 'Steel + Mesh',
@@ -651,6 +826,11 @@ export const cases: CaseComponent[] = [
     inStock: true,
     tags: ['dual-chamber', 'airflow', 'clean'],
     affiliateUrl: 'https://www.amazon.com/s?k=NZXT+H9+Flow',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BVPRNKBB',
+      'amazon.in': 'https://www.amazon.in/dp/B0BVPRNKBB',
+      'newegg.com': 'https://www.newegg.com/nzxt-h9-flow/p/N82E16811146387',
+    },
     specs: {
       formFactor: 'ATX',
       material: 'Steel + Tempered Glass',
@@ -672,6 +852,11 @@ export const cases: CaseComponent[] = [
     inStock: true,
     tags: ['budget', 'rgb', 'mid-tower'],
     affiliateUrl: 'https://www.amazon.com/s?k=Phanteks+Commander+C34+ARGB',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0BZ6G5T5Y',
+      'newegg.com': 'https://www.newegg.com/phanteks-eclipse-g360a/p/N82E16811854128',
+      'flipkart.com': 'https://www.flipkart.com/phanteks-commander-c34-argb/p/itm75a1d6f6e5a8b',
+    },
     specs: {
       formFactor: 'ATX',
       material: 'Steel + Tempered Glass',
@@ -697,6 +882,11 @@ export const coolers: CoolingComponent[] = [
     inStock: true,
     tags: ['aio', '360mm', 'rgb'],
     affiliateUrl: 'https://www.amazon.com/s?k=NZXT+Kraken+Elite+360+RGB',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0C955FK9V',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0C955FK9V',
+      'newegg.com': 'https://www.newegg.com/nzxt-kraken-elite-360-rgb/p/N82E16835146109',
+    },
     specs: {
       type: 'AIO Liquid Cooler',
       socket: 'AM5, AM4, LGA1851, LGA1700, LGA1200',
@@ -717,6 +907,11 @@ export const coolers: CoolingComponent[] = [
     inStock: true,
     tags: ['aio', '240mm', 'budget'],
     affiliateUrl: 'https://www.amazon.com/s?k=Cooler+Master+MasterLiquid+240',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CX4Z9FYR',
+      'amazon.in': 'https://www.amazon.in/dp/B0CX4Z9FYR',
+      'newegg.com': 'https://www.newegg.com/cooler-master-masterliquid-240/p/N82E16835103346',
+    },
     specs: {
       type: 'AIO Liquid Cooler',
       socket: 'AM5, AM4, LGA1700, LGA1200',
@@ -737,6 +932,13 @@ export const coolers: CoolingComponent[] = [
     inStock: true,
     tags: ['air-cooler', 'silent', 'premium'],
     affiliateUrl: 'https://www.amazon.com/s?k=Noctua+NH-D15+chromax',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0B99F7YZ1',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0B99F7YZ1',
+      'amazon.in': 'https://www.amazon.in/dp/B0B99F7YZ1',
+      'amazon.de': 'https://www.amazon.de/dp/B0B99F7YZ1',
+      'newegg.com': 'https://www.newegg.com/noctua-nh-d15-chromax-black/p/N82E16835608121',
+    },
     specs: {
       type: 'Air Cooler',
       socket: 'AM5, AM4, LGA1851, LGA1700',
@@ -761,6 +963,11 @@ export const monitors: PCComponent[] = [
     inStock: true,
     tags: ['ultrawide', 'oled', '240hz', 'gaming'],
     affiliateUrl: 'https://www.amazon.com/s?k=ASUS+ROG+Swift+OLED+PG34WCDM',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CZN8KPPJ',
+      'newegg.com': 'https://www.newegg.com/asus-rog-swift-oled-pg34wcdm/p/N82E16824281300',
+      'bestbuy.com': 'https://www.bestbuy.com/site/asus-rog-swift-oled-pg34wcdm/6578250.p',
+    },
     specs: {
       size: '34"',
       resolution: '3440x1440',
@@ -782,6 +989,12 @@ export const monitors: PCComponent[] = [
     inStock: true,
     tags: ['27-inch', 'oled', '240hz', 'gaming'],
     affiliateUrl: 'https://www.amazon.com/s?k=LG+UltraGear+27GS95QE',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0D15DQMGQ',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0D15DQMGQ',
+      'newegg.com': 'https://www.newegg.com/lg-27gs95qe/p/N82E16824025974',
+      'bestbuy.com': 'https://www.bestbuy.com/site/lg-ultragear-27gs95qe/6578251.p',
+    },
     specs: {
       size: '27"',
       resolution: '2560x1440',
@@ -803,6 +1016,11 @@ export const monitors: PCComponent[] = [
     inStock: true,
     tags: ['4k', 'oled', '240hz', 'ultrawide'],
     affiliateUrl: 'https://www.amazon.com/s?k=Dell+Alienware+AW3225QF',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0D5GSXPZM',
+      'newegg.com': 'https://www.newegg.com/dell-alienware-aw3225qf/p/N82E16824260951',
+      'bestbuy.com': 'https://www.bestbuy.com/site/dell-alienware-aw3225qf/6584412.p',
+    },
     specs: {
       size: '32"',
       resolution: '3840x2160',
@@ -828,6 +1046,9 @@ export const keyboards: PCComponent[] = [
     inStock: true,
     tags: ['mechanical', 'hall-effect', 'gaming'],
     affiliateUrl: 'https://www.amazon.com/s?k=Wooting+60HE+plus+keyboard',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0C42KZFHJ',
+    },
     specs: {
       layout: '60%',
       switches: 'Lekker (Hall Effect)',
@@ -848,6 +1069,10 @@ export const keyboards: PCComponent[] = [
     inStock: true,
     tags: ['mechanical', 'wireless', 'qmk', 'premium'],
     affiliateUrl: 'https://www.amazon.com/s?k=Keychron+Q1+Max+QMK',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CPC3MKRF',
+      'amazon.in': 'https://www.amazon.in/dp/B0CPC3MKRF',
+    },
     specs: {
       layout: '75%',
       switches: 'Keychron K Pro Brown',
@@ -872,6 +1097,12 @@ export const mice: PCComponent[] = [
     inStock: true,
     tags: ['wireless', 'gaming', 'esports'],
     affiliateUrl: 'https://www.amazon.com/s?k=Razer+DeathAdder+V3+HyperSpeed',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CLMQNT8K',
+      'amazon.in': 'https://www.amazon.in/dp/B0CLMQNT8K',
+      'bestbuy.com': 'https://www.bestbuy.com/site/razer-deathadder-v3-hyperspeed/6560786.p',
+      'flipkart.com': 'https://www.flipkart.com/razer-deathadder-v3-hyperspeed/p/itm3c2938e0dfc1d',
+    },
     specs: {
       dpi: '30,000 DPI',
       connectivity: '2.4GHz Wireless',
@@ -892,6 +1123,13 @@ export const mice: PCComponent[] = [
     inStock: true,
     tags: ['wireless', 'gaming', 'ultralight'],
     affiliateUrl: 'https://www.amazon.com/s?k=Logitech+G+Pro+X+Superlight+2',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0CKJ4H8WX',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0CKJ4H8WX',
+      'amazon.in': 'https://www.amazon.in/dp/B0CKJ4H8WX',
+      'bestbuy.com': 'https://www.bestbuy.com/site/logitech-g-pro-x-superlight-2/6557508.p',
+      'flipkart.com': 'https://www.flipkart.com/logitech-g-pro-x-superlight-2/p/itmea1f09e9ccb24',
+    },
     specs: {
       dpi: '44,000 DPI',
       connectivity: 'LIGHTSPEED Wireless',
@@ -916,6 +1154,12 @@ export const headsets: PCComponent[] = [
     inStock: true,
     tags: ['wireless', 'noise-cancelling', 'premium'],
     affiliateUrl: 'https://www.amazon.com/s?k=SteelSeries+Arctis+Nova+Pro+Wireless',
+    productUrls: {
+      'amazon.com': 'https://www.amazon.com/dp/B0B15QMY2K',
+      'amazon.co.uk': 'https://www.amazon.co.uk/dp/B0B15QMY2K',
+      'amazon.in': 'https://www.amazon.in/dp/B0B15QMY2K',
+      'bestbuy.com': 'https://www.bestbuy.com/site/steelseries-arctis-nova-pro-wireless/6507146.p',
+    },
     specs: {
       driver: '40mm',
       connectivity: 'Dual Wireless (2.4GHz + Bluetooth)',
