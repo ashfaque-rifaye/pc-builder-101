@@ -628,20 +628,54 @@ export default function BuildView() {
 
               <div className="space-y-2">
                 <button
-                  onClick={() => {
-                    // Open all product pages
-                    allEntries.forEach(([_, comp]) => {
-                      const url = getComponentUrl(comp);
-                      if (url) window.open(url.url, '_blank');
-                    });
+                  onClick={async (e) => {
+                    const btn = e.currentTarget;
+                    const originalText = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> Resolving links...`;
+
+                    try {
+                      const { smartSearchProduct } = await import('../services/api');
+                      
+                      const urlsToOpen = await Promise.all(allEntries.map(async ([_, comp]) => {
+                        const directUrl = getComponentUrl(comp);
+                        // If we have a direct Amazon/Newegg/etc URL, use it
+                        if (directUrl && !directUrl.url.includes('/s?k=')) {
+                          return directUrl.url;
+                        }
+                        
+                        // Otherwise it's a fallback search URL, so try to smart resolve it
+                        try {
+                          const urls = await smartSearchProduct(comp.name, comp.brand, region);
+                          const foundUrls = Object.values(urls);
+                          if (foundUrls.length > 0 && typeof foundUrls[0] === 'string') {
+                            return foundUrls[0];
+                          }
+                        } catch (err) {
+                          console.error('Failed to resolve URL for', comp.name, err);
+                        }
+                        
+                        // Ultimate fallback
+                        return directUrl?.url || comp.affiliateUrl;
+                      }));
+
+                      // Open all resolved URLs
+                      urlsToOpen.forEach((url) => {
+                        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+                      });
+                    } finally {
+                      btn.disabled = false;
+                      btn.innerHTML = originalText;
+                    }
                   }}
-                  className="w-full btn-primary py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2"
+                  className="w-full btn-primary py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                   Buy All Components
                 </button>
+
                 <Link
                   to="/builder"
                   className="w-full btn-secondary py-2.5 rounded-xl text-xs font-medium flex items-center justify-center gap-2"

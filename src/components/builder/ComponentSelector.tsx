@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { AnyPCComponent, ComponentCategory, StockStatus } from '../../types';
 import { CATEGORY_LABELS, CATEGORY_ICONS, allComponents } from '../../data/components';
 import { useBuilderStore } from '../../store/builderStore';
@@ -54,6 +55,70 @@ function StockBadge({ status, regionCode }: { status: StockStatus; regionCode: s
     <span className="badge-outofstock text-[10px] px-1.5 py-0.5 rounded-full font-medium">
       ✕ Out of Stock in {regionCode}
     </span>
+  );
+}
+
+function SmartPurchaseButton({ component, fallbackUrl, isSelected }: { component: AnyPCComponent, fallbackUrl: string, isSelected: boolean }) {
+  const { region } = useUiStore();
+  const regionConfig = getRegion(region);
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      // Import dynamically to avoid circular dependencies if any, though it's already imported
+      const { smartSearchProduct } = await import('../../services/api');
+      const urls = await smartSearchProduct(component.name, component.brand, region);
+      
+      // If we got valid URLs back, use the first one (or preferably the one for the best retailer)
+      const foundUrls = Object.values(urls);
+      if (foundUrls.length > 0 && typeof foundUrls[0] === 'string') {
+        window.open(foundUrls[0], '_blank', 'noopener,noreferrer');
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to smart search:', err);
+    } finally {
+      setLoading(false);
+    }
+
+    // Fallback to static URL
+    window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="mt-2 flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-xs font-medium transition-all border"
+      style={isSelected ? {
+        background: 'color-mix(in srgb, var(--neon-primary) 10%, transparent)',
+        color: 'var(--neon-primary)',
+        borderColor: 'color-mix(in srgb, var(--neon-primary) 30%, transparent)',
+      } : {
+        background: 'color-mix(in srgb, white 5%, transparent)',
+        color: 'var(--text-secondary)',
+        borderColor: 'var(--border-subtle)',
+      }}
+    >
+      {loading ? (
+        <span className="w-3 h-3 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'currentColor', borderTopColor: 'transparent' }} />
+      ) : (
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      )}
+      {loading ? 'Finding exact product...' : `Buy on ${regionConfig.flag} ${regionConfig.amazonDomain}`}
+      {!loading && (
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+      )}
+    </button>
   );
 }
 
@@ -285,30 +350,7 @@ export default function ComponentSelector({ category, onSelect }: ComponentSelec
                     ))}
                   </div>
                 ) : (
-                  <a
-                    href={purchaseUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="mt-2 flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-xs font-medium transition-all border"
-                    style={isSelected ? {
-                      background: 'color-mix(in srgb, var(--neon-primary) 10%, transparent)',
-                      color: 'var(--neon-primary)',
-                      borderColor: 'color-mix(in srgb, var(--neon-primary) 30%, transparent)',
-                    } : {
-                      background: 'color-mix(in srgb, white 5%, transparent)',
-                      color: 'var(--text-secondary)',
-                      borderColor: 'var(--border-subtle)',
-                    }}
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    Buy on {regionConfig.flag} {regionConfig.amazonDomain}
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
+                  <SmartPurchaseButton component={component} fallbackUrl={purchaseUrl} isSelected={isSelected} />
                 );
               })()}
             </div>

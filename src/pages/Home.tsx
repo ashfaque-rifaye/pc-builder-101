@@ -1,361 +1,217 @@
+import { Suspense, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Suspense, useEffect, useRef, useState, useCallback } from 'react';
-import PCScene from '../components/three/PCScene';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { ScrollControls, Scroll, useScroll, Float, ContactShadows, Environment } from '@react-three/drei';
+import * as THREE from 'three';
+import Lenis from 'lenis';
 
-/* ─── Data ─────────────────────────────────────────────────────────────────── */
-const features = [
-  { icon: '🎮', title: '3D Interactive Viewer', desc: 'Explore every component with our real-time 3D renderer. Rotate, zoom, and inspect your build from every angle.', gradient: 'from-cyan-500/20 to-blue-600/20' },
-  { icon: '⚡', title: 'Smart Compatibility', desc: 'Real-time validation ensures your CPU, motherboard, RAM, and cooling all work together perfectly.', gradient: 'from-purple-500/20 to-pink-600/20' },
-  { icon: '🛒', title: 'Multi-Retailer Links', desc: 'Direct product links to Amazon, Newegg, BestBuy, Flipkart, and more — exact products, not search pages.', gradient: 'from-orange-500/20 to-red-600/20' },
-  { icon: '📐', title: 'Build Estimator', desc: 'Instant multi-currency price estimates as you add components. See where your money is going in real time.', gradient: 'from-green-500/20 to-emerald-600/20' },
-  { icon: '🏆', title: 'Expert Presets', desc: 'Start with expert-curated presets for gaming, workstation, streaming, or budget builds.', gradient: 'from-yellow-500/20 to-amber-600/20' },
-  { icon: '🌍', title: '9 Region Support', desc: 'US, UK, EU, India, Australia, Japan, Canada, Singapore, and UAE with local pricing and retailers.', gradient: 'from-teal-500/20 to-cyan-600/20' },
-];
+// Import our 3D components
+import PCCase from '../components/three/PCCase';
+import ParticleField from '../components/three/ParticleField';
 
-const stats = [
-  { value: 50, suffix: '+', label: 'Components' },
-  { value: 6, suffix: '', label: 'Preset Builds' },
-  { value: 9, suffix: '', label: 'Regions' },
-  { value: 13, suffix: '', label: 'Retailers' },
-];
+/* ─── 3D SCENE RIG ──────────────────────────────────────────────────────── */
 
-const showcaseSteps = [
-  { num: '01', title: 'Select Components', desc: 'Choose from 50+ curated PC components across CPUs, GPUs, RAM, storage, and more.', icon: '🔧' },
-  { num: '02', title: 'Check Compatibility', desc: 'Our smart engine validates socket types, DDR generations, PSU wattage, and cooler clearance.', icon: '✅' },
-  { num: '03', title: 'Visualize in 3D', desc: 'See your complete build rendered in real-time 3D with assembly animations and RGB customization.', icon: '🖥️' },
-  { num: '04', title: 'Purchase Directly', desc: 'Buy every component from verified retailers with region-aware pricing and direct product links.', icon: '🛍️' },
-];
+function PCModelRig() {
+  const group = useRef<THREE.Group>(null);
+  const scroll = useScroll();
 
-/* ─── Hooks ────────────────────────────────────────────────────────────────── */
-function useScrollReveal(threshold = 0.12) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+  useFrame((_state, delta) => {
+    if (!group.current) return;
+    
+    // scroll.offset goes from 0 (top) to 1 (bottom)
+    const r1 = scroll.range(0, 1 / 4);     // Intro -> The Brain
+    const r2 = scroll.range(1 / 4, 1 / 4); // The Brain -> GPU
+    const r3 = scroll.range(2 / 4, 1 / 4); // GPU -> Cooling
 
-function useParallax() {
-  const [offset, setOffset] = useState(0);
-  useEffect(() => {
-    const onScroll = () => setOffset(window.scrollY);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-  return offset;
-}
+    // Intro (Hero): Centered, slightly rotated
+    let targetX = 0;
+    let targetY = -0.5;
+    let targetZ = 0;
+    let targetRotY = Math.PI * 0.15;
+    let targetRotX = 0;
+    let scale = 1.2;
 
-function AnimatedCounter({ target, suffix = '', duration = 2000 }: { target: number; suffix?: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
+    // 1. The Brain (CPU focus)
+    if (scroll.offset > 0 && scroll.offset <= 0.33) {
+      targetX = THREE.MathUtils.lerp(0, 2, r1); // Move right
+      targetY = THREE.MathUtils.lerp(-0.5, -1, r1); // Move down
+      targetRotY = THREE.MathUtils.lerp(Math.PI * 0.15, -Math.PI * 0.1, r1);
+      targetRotX = THREE.MathUtils.lerp(0, 0.2, r1);
+      scale = THREE.MathUtils.lerp(1.2, 1.8, r1);
+    }
+    // 2. The Graphics (GPU focus)
+    else if (scroll.offset > 0.33 && scroll.offset <= 0.66) {
+      targetX = THREE.MathUtils.lerp(2, -2, r2); // Move left
+      targetY = THREE.MathUtils.lerp(-1, 0.5, r2); // Move up
+      targetRotY = THREE.MathUtils.lerp(-Math.PI * 0.1, Math.PI * 0.25, r2);
+      targetRotX = THREE.MathUtils.lerp(0.2, -0.1, r2);
+      scale = THREE.MathUtils.lerp(1.8, 1.9, r2);
+    }
+    // 3. Cooling & Masterpiece (Full view)
+    else if (scroll.offset > 0.66) {
+      targetX = THREE.MathUtils.lerp(-2, 0, r3); // Center
+      targetY = THREE.MathUtils.lerp(0.5, -0.5, r3); // Reset
+      targetRotY = THREE.MathUtils.lerp(Math.PI * 0.25, Math.PI * 2.15, r3); // Spin around
+      targetRotX = THREE.MathUtils.lerp(-0.1, 0, r3);
+      scale = THREE.MathUtils.lerp(1.9, 1.3, r3);
+    }
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !started.current) {
-        started.current = true;
-        const startTime = performance.now();
-        const animate = (now: number) => {
-          const elapsed = now - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          setCount(Math.round(eased * target));
-          if (progress < 1) requestAnimationFrame(animate);
-        };
-        requestAnimationFrame(animate);
-      }
-    }, { threshold: 0.5 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [target, duration]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
-
-/* ─── Component ────────────────────────────────────────────────────────────── */
-export default function Home() {
-  const scrollY = useParallax();
-  const featuresReveal = useScrollReveal(0.08);
-  const stepsReveal = useScrollReveal(0.08);
-  const statsReveal = useScrollReveal(0.15);
-  const ctaReveal = useScrollReveal(0.15);
-  const [heroLoaded, setHeroLoaded] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setHeroLoaded(true), 100);
-    return () => clearTimeout(t);
-  }, []);
-
-  const heroTextY = useCallback(() => scrollY * 0.3, [scrollY]);
-  const heroOpacity = useCallback(() => Math.max(0, 1 - scrollY / 600), [scrollY]);
+    // Apply smooth damping
+    group.current.position.x = THREE.MathUtils.damp(group.current.position.x, targetX, 4, delta);
+    group.current.position.y = THREE.MathUtils.damp(group.current.position.y, targetY, 4, delta);
+    group.current.position.z = THREE.MathUtils.damp(group.current.position.z, targetZ, 4, delta);
+    
+    group.current.rotation.y = THREE.MathUtils.damp(group.current.rotation.y, targetRotY, 4, delta);
+    group.current.rotation.x = THREE.MathUtils.damp(group.current.rotation.x, targetRotX, 4, delta);
+    
+    group.current.scale.setScalar(THREE.MathUtils.damp(group.current.scale.x, scale, 4, delta));
+  });
 
   return (
-    <div className="min-h-screen overflow-x-hidden" style={{ background: 'var(--bg-dark)' }}>
+    <group ref={group}>
+      <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
+        <PCCase glowColor="var(--neon-primary)" autoRotate={false} />
+      </Float>
+    </group>
+  );
+}
 
-      {/* ═══════════════════ HERO — Full-viewport cinematic ═══════════════════ */}
-      <section className="relative min-h-[100vh] flex items-center overflow-hidden">
-        {/* Layered background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 grid-pattern opacity-40" />
-          <div className="absolute inset-0" style={{
-            background: `radial-gradient(ellipse 80% 60% at 50% 40%, color-mix(in srgb, var(--accent-1) 12%, transparent), transparent),
-                         radial-gradient(ellipse 60% 50% at 80% 60%, color-mix(in srgb, var(--accent-2) 8%, transparent), transparent),
-                         linear-gradient(to bottom, transparent 70%, var(--bg-dark))`
-          }} />
-        </div>
+function AnimatedScene() {
+  return (
+    <>
+      <ambientLight intensity={0.4} />
+      <pointLight position={[5, 5, 5]} intensity={2.5} color="#ffffff" />
+      <pointLight position={[-5, 3, -2]} intensity={1.5} color="#00f5ff" />
+      <pointLight position={[0, -3, 3]} intensity={1.5} color="#ff00f5" />
+      <spotLight position={[0, 10, 0]} intensity={3} angle={0.5} penumbra={1} castShadow />
+      
+      <Environment preset="city" />
+      <ParticleField count={300} />
 
-        {/* Floating orbs with parallax */}
-        <div className="absolute orb" style={{ top: '15%', left: '10%', width: '500px', height: '500px', background: 'color-mix(in srgb, var(--accent-1) 6%, transparent)', transform: `translateY(${scrollY * -0.15}px)` }} />
-        <div className="absolute orb" style={{ bottom: '15%', right: '10%', width: '400px', height: '400px', background: 'color-mix(in srgb, var(--accent-2) 6%, transparent)', animationDelay: '-3s', transform: `translateY(${scrollY * -0.1}px)` }} />
-        <div className="absolute orb" style={{ top: '50%', left: '40%', width: '300px', height: '300px', background: 'color-mix(in srgb, var(--neon-primary) 4%, transparent)', animationDelay: '-6s' }} />
+      <PCModelRig />
 
-        {/* Hero content with parallax */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-12 grid lg:grid-cols-2 items-center gap-12 w-full"
-          style={{ transform: `translateY(${heroTextY()}px)`, opacity: heroOpacity() }}>
+      <ContactShadows position={[0, -3, 0]} opacity={0.6} scale={20} blur={2.5} far={10} color="#00f5ff" />
+    </>
+  );
+}
 
-          {/* Left — Copy */}
-          <div className="space-y-8">
-            <div className={`transition-all duration-1000 ${heroLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-              style={{ transitionDelay: '200ms' }}>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-medium"
-                style={{ background: 'color-mix(in srgb, var(--accent-1) 10%, transparent)', borderColor: 'color-mix(in srgb, var(--accent-1) 25%, transparent)', color: 'var(--neon-primary)' }}>
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--neon-primary)' }} />
-                  <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--neon-primary)' }} />
-                </span>
-                Next-Gen 3D PC Builder — Now Live
-              </div>
-            </div>
+/* ─── HTML OVERLAYS ─────────────────────────────────────────────────────── */
 
-            <h1 className={`transition-all duration-1000 ${heroLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-              style={{ transitionDelay: '400ms' }}>
-              <span className="block text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                Build Your
-              </span>
-              <span className="block text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight gradient-text animate-text-shimmer"
-                style={{ backgroundImage: 'linear-gradient(90deg, var(--gradient-text-start), var(--gradient-text-end), var(--gradient-text-start))', backgroundSize: '200% auto' }}>
-                Dream PC
-              </span>
-              <span className="block text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.2] mt-2" style={{ color: 'var(--text-secondary)' }}>
-                in Immersive 3D
-              </span>
-            </h1>
+export default function Home() {
+  // We apply Lenis globally so that scrolling the body is buttery smooth
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Apple-like easing
+      smoothWheel: true,
+    });
 
-            <p className={`text-lg leading-relaxed max-w-lg transition-all duration-1000 ${heroLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-              style={{ color: 'var(--text-secondary)', transitionDelay: '600ms' }}>
-              The world's most immersive PC configurator. Select components, validate compatibility in real-time, visualize your build in cinematic 3D, and purchase from verified retailers worldwide.
-            </p>
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
 
-            <div className={`flex flex-wrap gap-4 transition-all duration-1000 ${heroLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-              style={{ transitionDelay: '800ms' }}>
-              <Link to="/builder"
-                className="group relative px-8 py-4 rounded-2xl text-base font-bold text-white overflow-hidden hover-lift">
-                <div className="absolute inset-0 btn-primary" />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: 'linear-gradient(135deg, var(--gradient-btn-end), var(--gradient-btn-start))' }} />
-                <span className="relative flex items-center gap-2">
-                  Start Building
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
-              </Link>
-              <Link to="/presets"
-                className="btn-secondary px-8 py-4 rounded-2xl text-base font-medium inline-flex items-center gap-2 hover-lift"
-                style={{ color: 'var(--text-secondary)' }}>
-                View Presets
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </Link>
-            </div>
-          </div>
+    return () => lenis.destroy();
+  }, []);
 
-          {/* Right — 3D Scene */}
-          <div className={`h-[500px] lg:h-[620px] rounded-3xl overflow-hidden relative transition-all duration-1200 ${heroLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-            style={{ transitionDelay: '500ms' }}>
-            <div className="absolute inset-0 rounded-3xl pointer-events-none z-10"
-              style={{ border: '1px solid var(--border-subtle)', background: 'linear-gradient(to bottom, transparent 50%, var(--bg-dark))' }} />
-            <div className="absolute inset-0 rounded-3xl pointer-events-none z-10 animated-border" />
-            <Suspense fallback={
-              <div className="w-full h-full flex items-center justify-center" style={{ background: 'var(--bg-card)' }}>
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-10 h-10 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'var(--neon-primary)', borderTopColor: 'transparent' }} />
-                  <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Loading 3D…</span>
-                </div>
-              </div>
-            }>
-              <PCScene glowColor="#00f5ff" showPeripherals showMonitor autoRotateCase={false} orbitControlsEnabled />
-            </Suspense>
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center z-20">
-              <span className="text-xs px-4 py-1.5 rounded-full"
-                style={{ color: 'var(--text-muted)', background: 'color-mix(in srgb, var(--bg-dark) 85%, transparent)', backdropFilter: 'blur(8px)' }}>
-                🖱️ Drag to rotate · Scroll to zoom
-              </span>
-            </div>
-          </div>
-        </div>
+  return (
+    <div className="w-screen h-screen relative bg-black font-sans text-white overflow-hidden">
+      <Canvas shadows camera={{ position: [0, 0, 10], fov: 35 }} gl={{ antialias: true, alpha: false }}>
+        <color attach="background" args={['#050811']} />
+        
+        {/* We use 5 pages of scroll distance for the cinematic scrubbing effect */}
+        <ScrollControls pages={5} damping={0.25} maxSpeed={0.5}>
+          
+          <Suspense fallback={null}>
+            <AnimatedScene />
+          </Suspense>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          style={{ opacity: heroOpacity() }}>
-          <span className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: 'var(--text-muted)' }}>Scroll to explore</span>
-          <div className="w-5 h-9 rounded-full border-2 flex justify-center pt-2" style={{ borderColor: 'var(--text-muted)' }}>
-            <div className="w-1 h-2.5 rounded-full animate-bounce" style={{ background: 'var(--neon-primary)' }} />
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════ STATS BAR — Animated counters ═══════════════════ */}
-      <section ref={statsReveal.ref} className="relative py-8 border-y" style={{ borderColor: 'var(--border-subtle)' }}>
-        <div className="absolute inset-0" style={{ background: 'color-mix(in srgb, var(--accent-1) 3%, var(--bg-dark))' }} />
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((s, i) => (
-              <div key={s.label}
-                className={`text-center transition-all duration-700 ${statsReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-                style={{ transitionDelay: `${i * 150}ms` }}>
-                <p className="text-3xl sm:text-4xl font-black gradient-text">
-                  <AnimatedCounter target={s.value} suffix={s.suffix} />
-                </p>
-                <p className="text-xs mt-1 uppercase tracking-wider font-medium" style={{ color: 'var(--text-muted)' }}>{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════ HOW IT WORKS — Cinematic steps ═══════════════════ */}
-      <section ref={stepsReveal.ref} className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, var(--accent-1), transparent)' }} />
-
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-          <div className={`text-center mb-20 transition-all duration-800 ${stepsReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <p className="text-sm font-bold uppercase tracking-[0.25em] mb-4" style={{ color: 'var(--neon-primary)' }}>How It Works</p>
-            <h2 className="text-3xl sm:text-5xl font-black" style={{ color: 'var(--text-primary)' }}>
-              Four Steps to Your <span className="gradient-text">Perfect Build</span>
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {showcaseSteps.map((step, i) => (
-              <div key={step.num}
-                className={`group relative rounded-2xl p-6 border transition-all duration-700 hover-lift ${stepsReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
-                style={{
-                  background: 'var(--bg-card)',
-                  borderColor: 'var(--border-subtle)',
-                  transitionDelay: `${300 + i * 150}ms`,
-                }}>
-                {/* Step number */}
-                <div className="absolute -top-4 -left-2 text-7xl font-black opacity-[0.04] pointer-events-none"
-                  style={{ color: 'var(--neon-primary)' }}>{step.num}</div>
-
-                <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
-                    style={{ background: 'color-mix(in srgb, var(--accent-1) 12%, transparent)' }}>
-                    {step.icon}
-                  </div>
-                  <div className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--neon-primary)' }}>
-                    Step {step.num}
-                  </div>
-                  <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{step.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{step.desc}</p>
-                </div>
-
-                {/* Connector line (not on last) */}
-                {i < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-px" style={{ background: 'var(--border-subtle)' }}>
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full" style={{ background: 'var(--neon-primary)' }} />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════ FEATURES — Premium cards ═══════════════════════ */}
-      <section className="py-28 relative" ref={featuresReveal.ref}>
-        <div className="absolute inset-0" style={{ background: 'color-mix(in srgb, var(--accent-2) 2%, var(--bg-dark))' }} />
-        <div className="absolute inset-0 grid-pattern opacity-15" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-          <div className={`text-center mb-16 transition-all duration-800 ${featuresReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <p className="text-sm font-bold uppercase tracking-[0.25em] mb-4" style={{ color: 'var(--neon-primary)' }}>
-              Powerful Features
-            </p>
-            <h2 className="text-3xl sm:text-5xl font-black mb-5" style={{ color: 'var(--text-primary)' }}>
-              Everything You Need to <span className="gradient-text">Build Smart</span>
-            </h2>
-            <p className="max-w-xl mx-auto text-base" style={{ color: 'var(--text-secondary)' }}>
-              From selecting components to placing your order — powerful tools and a stunning 3D interface.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((f, i) => (
-              <div key={f.title}
-                className={`group glow-card rounded-2xl p-7 border transition-all duration-700 ${featuresReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ background: 'var(--bg-card)', borderColor: 'var(--border-subtle)', transitionDelay: `${200 + i * 100}ms` }}>
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5 transition-all duration-500 group-hover:scale-110"
-                  style={{ background: 'color-mix(in srgb, var(--accent-1) 12%, transparent)' }}>
-                  {f.icon}
-                </div>
-                <h3 className="text-lg font-bold mb-2 transition-colors" style={{ color: 'var(--text-primary)' }}>{f.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════ CTA — Final call to action ═══════════════════════ */}
-      <section className="py-28 relative" ref={ctaReveal.ref}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className={`relative rounded-3xl p-14 overflow-hidden border transition-all duration-800 ${ctaReveal.visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-            style={{ borderColor: 'color-mix(in srgb, var(--accent-1) 25%, transparent)', background: 'var(--bg-card)' }}>
-            <div className="absolute inset-0"
-              style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-1) 10%, transparent), color-mix(in srgb, var(--accent-2) 10%, transparent))' }} />
-            <div className="absolute inset-0 grid-pattern opacity-15" />
-
-            <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full animate-glow-pulse"
-              style={{ background: 'color-mix(in srgb, var(--accent-1) 10%, transparent)', filter: 'blur(50px)' }} />
-            <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full animate-glow-pulse"
-              style={{ background: 'color-mix(in srgb, var(--accent-2) 10%, transparent)', filter: 'blur(50px)', animationDelay: '1.5s' }} />
-
-            <div className="relative">
-              <h2 className="text-3xl sm:text-5xl font-black mb-5" style={{ color: 'var(--text-primary)' }}>
-                Ready to Build Your <span className="gradient-text">Dream Setup?</span>
-              </h2>
-              <p className="mb-10 max-w-xl mx-auto text-base" style={{ color: 'var(--text-secondary)' }}>
-                Whether you're building a gaming rig, content creation powerhouse, or home office workstation — start here.
+          <Scroll html style={{ width: '100vw' }}>
+            
+            {/* 1. HERO SECTION */}
+            <section className="h-screen flex flex-col justify-center items-center text-center px-6 relative z-10">
+              <p className="text-cyan-400 font-bold uppercase tracking-[0.3em] mb-4 text-sm md:text-base animate-pulse">
+                The Future of PC Building
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link to="/builder"
-                  className="group btn-primary px-10 py-4 rounded-2xl font-bold text-white text-base hover-lift inline-flex items-center gap-2">
-                  Open PC Builder
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
+              <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-6 drop-shadow-2xl">
+                DREAM. <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">BUILD.</span> PLAY.
+              </h1>
+              <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed mb-10">
+                Experience the world's most immersive, globally-accessible 3D PC configurator. See every part before you buy.
+              </p>
+              <div className="flex gap-4 mt-4">
+                <Link to="/builder" className="px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform">
+                  Start Building
                 </Link>
-                <Link to="/viewer"
-                  className="btn-secondary px-10 py-4 rounded-2xl font-medium text-base hover-lift"
-                  style={{ color: 'var(--text-secondary)' }}>
-                  View 3D Demo
+                <div className="flex flex-col items-center justify-center opacity-50 ml-6">
+                  <span className="text-[10px] uppercase tracking-widest mb-2">Scroll</span>
+                  <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent" />
+                </div>
+              </div>
+            </section>
+
+            {/* 2. THE BRAIN (CPU) */}
+            <section className="h-screen flex flex-col justify-center items-start px-10 md:px-24 w-full max-w-7xl mx-auto pointer-events-none">
+              <div className="max-w-md pointer-events-auto">
+                <p className="text-cyan-400 font-bold uppercase tracking-[0.2em] mb-2 text-sm">The Processor</p>
+                <h2 className="font-heading text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                  The Brain <br/>of the Machine.
+                </h2>
+                <p className="text-lg md:text-xl text-slate-400 font-light leading-relaxed">
+                  We check compatibility instantly. Whether you choose Intel or AMD, we make sure your motherboard and RAM are perfectly matched, so you never buy the wrong parts.
+                </p>
+              </div>
+            </section>
+
+            {/* 3. THE GRAPHICS (GPU) */}
+            <section className="h-screen flex flex-col justify-center items-end px-10 md:px-24 w-full max-w-7xl mx-auto pointer-events-none text-right">
+              <div className="max-w-md pointer-events-auto">
+                <p className="text-purple-400 font-bold uppercase tracking-[0.2em] mb-2 text-sm">The Visual Engine</p>
+                <h2 className="font-heading text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                  Stunning <br/>Graphics.
+                </h2>
+                <p className="text-lg md:text-xl text-slate-400 font-light leading-relaxed">
+                  See how massive your graphics card actually is. Our true-to-scale 3D models ensure your GPU physically fits inside your chosen case before you spend a dime.
+                </p>
+              </div>
+            </section>
+
+            {/* 4. COOLING & RGB */}
+            <section className="h-screen flex flex-col justify-center items-start px-10 md:px-24 w-full max-w-7xl mx-auto pointer-events-none">
+              <div className="max-w-md pointer-events-auto">
+                <p className="text-emerald-400 font-bold uppercase tracking-[0.2em] mb-2 text-sm">Thermals & Light</p>
+                <h2 className="font-heading text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                  Stay Cool. <br/>Look Incredible.
+                </h2>
+                <p className="text-lg md:text-xl text-slate-400 font-light leading-relaxed">
+                  Visualize airflow patterns and customize your RGB lighting in real-time. Build a PC that doesn't just perform well, but looks like a masterpiece.
+                </p>
+              </div>
+            </section>
+
+            {/* 5. OUTRO / CTA */}
+            <section className="h-screen flex flex-col justify-center items-center text-center px-6 relative z-10">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050811] via-transparent to-transparent pointer-events-none" />
+              <h2 className="font-heading text-6xl md:text-8xl font-black mb-8 drop-shadow-lg">
+                Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">Build?</span>
+              </h2>
+              <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+                Buy directly from Amazon, Newegg, Best Buy, and local retailers worldwide with our AI-powered product finder.
+              </p>
+              <div className="flex gap-6">
+                <Link to="/builder" className="px-10 py-5 bg-white text-black text-lg font-bold rounded-full hover:scale-105 transition-transform shadow-[0_0_40px_rgba(0,245,255,0.3)]">
+                  Enter PC Builder
+                </Link>
+                <Link to="/presets" className="px-10 py-5 bg-white/10 backdrop-blur-md text-white border border-white/20 text-lg font-bold rounded-full hover:bg-white/20 transition-all">
+                  View Expert Presets
                 </Link>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </section>
+            
+          </Scroll>
+        </ScrollControls>
+      </Canvas>
     </div>
   );
 }
